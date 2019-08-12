@@ -11,15 +11,19 @@ def arraySearchBinary():
     '''Takes sequence and value, searches value in sequence with binary 
     search alghoritm'''
     json_data = request.get_json()
-    
-    work_data = json.loads(json_data)
     if json_data is None:
         return "Empty data from client"
     else:
         print("Got data from client", json_data)
+
+    work_data = json.loads(json_data)
+    t_arr = []
+    for key, value in work_data.items():
+        t_arr.append(value)
     
     # start searching and result operating
-    search_result = startSearch(work_data)
+    search_result = b_search(t_arr[0], t_arr[1])
+
     if search_result == False:
         return "wrong query data, please, recheck request"
     else:
@@ -32,20 +36,10 @@ def arraySearchBinary():
 def home_tree():
     return('home tree')
 
-def startSearch(data):
-    # preparing data before alghoritm part
-    # w_array = json.loads(data)
-    t_arr = []
-    for key, value in data.items():
-        t_arr.append(value)
-
-    # start search in alghoritm
-    return b_search(t_arr[0], t_arr[1])
-
 def b_search(seq, value):
-    print('Got sequence',seq,' search for value',value)
+    print('Got sequence:',seq,' value to find:',value)
 
-    # validation work data
+    # validation and preparation
     try:
         seq.sort()
     except:
@@ -76,9 +70,9 @@ def send_request_info(s_data, result):
     # queue for search results
     channel.queue_declare(queue='search')
 
-    # print('data',data,"result",result)
     search_data = copy.deepcopy(s_data)
-    search_data.update(result);  print(search_data)
+    search_data.update(result)
+    search_data = json.dumps(search_data)
 
     channel.basic_publish(exchange='', routing_key='search', body=search_data)
     request_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
