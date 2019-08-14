@@ -1,8 +1,9 @@
-from flask import Flask,request
-from datetime import datetime
-import pika
-import json
 import copy
+from datetime import datetime
+import json
+
+from flask import Flask,request
+import pika
 
 app = Flask(__name__)   
 
