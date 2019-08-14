@@ -1,6 +1,7 @@
 import copy
 from datetime import datetime
 import json
+import logging
 
 from flask import Flask,request
 import pika
@@ -31,11 +32,6 @@ def array_search_binary():
         answer = {'search_element_index':search_result}
         send_request_info(work_data, answer)
         return answer
-
-# === test route, remove before prod
-@app.route('/home_tree')
-def home_tree():
-    return('home tree')
 
 def b_search(seq, value):
     print('Got sequence:',seq,' value to find:',value)
