@@ -8,7 +8,7 @@ import pika
 app = Flask(__name__)   
 
 @app.route('/array/search/binary/', methods=['POST'])
-def arraySearchBinary():
+def array_search_binary():
     '''Takes sequence and value, searches value in sequence with binary 
     search alghoritm'''
     json_data = request.get_json()
