@@ -30,7 +30,7 @@ def array_search_binary():
 
     work_data = json.loads(json_data)
     temp_array = list(work_data.values())
-    
+
     # start searching and result operating
     search_result = b_search(temp_array[0], temp_array[1])
 
@@ -51,7 +51,7 @@ def b_search(seq, value):
     except:
         return False
     finally:
-        if isinstance(value, int) == False:
+        if not isinstance(value, int):
             return False
     
     list = 0
