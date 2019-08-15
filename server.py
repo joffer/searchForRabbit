@@ -30,12 +30,12 @@ def array_search_binary():
         logger.info("Received request for search from client")
 
     work_data = json.loads(json_data)
-    t_arr = []
+    temp_array = []
     for key, value in work_data.items():
-        t_arr.append(value)
+        temp_array.append(value)
     
     # start searching and result operating
-    search_result = b_search(t_arr[0], t_arr[1])
+    search_result = b_search(temp_array[0], temp_array[1])
 
     if search_result == False:
         logger.info('Data was not acceptable, couldn\'t perform search')
