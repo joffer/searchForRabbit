@@ -38,7 +38,7 @@ def array_search_binary():
         logger.info('Data was not acceptable, couldn\'t perform search')
         return "Wrong query data, please, recheck request"
     else:
-        answer = {'search_element_index':search_result}
+        answer = {'search_element_index': search_result}
         logger.info('Client data: %s, search result: %s' % 
                     (work_data, search_result))
         send_request_info(work_data, answer)
