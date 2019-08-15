@@ -29,9 +29,7 @@ def array_search_binary():
         logger.info("Received request for search from client")
 
     work_data = json.loads(json_data)
-    temp_array = []
-    for key, value in work_data.items():
-        temp_array.append(value)
+    temp_array = list(work_data.values())
     
     # start searching and result operating
     search_result = b_search(temp_array[0], temp_array[1])
