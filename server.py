@@ -34,7 +34,7 @@ def array_search_binary():
     # start searching and result operating
     search_result = b_search(temp_array[0], temp_array[1])
 
-    if search_result == False:
+    if not search_result:
         logger.info('Data was not acceptable, couldn\'t perform search')
         return "Wrong query data, please, recheck request"
     else:
