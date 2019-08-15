@@ -6,17 +6,28 @@ import logging
 from flask import Flask,request
 import pika
 
-app = Flask(__name__)   
+app = Flask(__name__)
+
+# initialize logging
+log_file = logging.FileHandler('Search_log.log')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(message)s')
+log_file.setFormatter(formatter)
+logger.addHandler(log_file)
 
 @app.route('/array/search/binary/', methods=['POST'])
 def array_search_binary():
     '''Takes sequence and value, searches value in sequence with binary 
     search alghoritm'''
+
     json_data = request.get_json()
     if json_data is None:
+        logger.info('Empty request from client')
         return "Empty data from client"
     else:
         print("Got data from client", json_data)
+        logger.info("Received request for search from client")
 
     work_data = json.loads(json_data)
     t_arr = []
@@ -27,9 +38,12 @@ def array_search_binary():
     search_result = b_search(t_arr[0], t_arr[1])
 
     if search_result == False:
-        return "wrong query data, please, recheck request"
+        logger.info('Data was not acceptable, couldn\'t perform search')
+        return "Wrong query data, please, recheck request"
     else:
         answer = {'search_element_index':search_result}
+        logger.info('Client data: %s, search result: %s' % 
+                    (work_data, search_result))
         send_request_info(work_data, answer)
         return answer
 
