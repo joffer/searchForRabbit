@@ -26,7 +26,6 @@ def array_search_binary():
         logger.info('Empty request from client')
         return "Empty data from client"
     else:
-        print("Got data from client", json_data)
         logger.info("Received request for search from client")
 
     work_data = json.loads(json_data)
@@ -48,8 +47,6 @@ def array_search_binary():
         return answer
 
 def b_search(seq, value):
-    print('Got sequence:',seq,' value to find:',value)
-
     # validation and preparation
     try:
         seq.sort()
@@ -86,8 +83,7 @@ def send_request_info(s_data, result):
     search_data = json.dumps(search_data)
 
     channel.basic_publish(exchange='', routing_key='search', body=search_data)
-    request_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    print(" [x] ", request_time, "sent data for requests logging:",search_data)
+    logger.info("Request and result send to queue 'Search'")
 
     connection.close()
 
