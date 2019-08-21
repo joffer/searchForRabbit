@@ -2,7 +2,7 @@ import requests
 import json
 
 URL = 'http://127.0.0.1:5000/array/search/binary/'
-t_array = [1,3,5,8,10,12]
+t_array = [1,3,9,5,8,10,12]
 elem_in_array = 10
 
 request_data = {
@@ -13,4 +13,4 @@ post_data = json.dumps(request_data)
 
 resp = requests.post(URL, json=post_data)
 if resp.ok:
-    print("Result:\n",resp.text)
+    print("Result:\n",resp.text, sep='')
