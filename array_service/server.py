@@ -22,11 +22,11 @@ logger.addHandler(log_file)
 
 # rabbit queue connection 
 connection_address = '127.0.0.1'
-active_queue = 'search'
+current_queue = 'search'
 connection = pika.BlockingConnection(
                 pika.ConnectionParameters(connection_address))
 channel = connection.channel()
-channel.queue_declare(queue=active_queue)
+channel.queue_declare(queue=current_queue)
 
 @app.route('/array/search/binary/', methods=['POST'])
 def array_search_binary():
@@ -50,27 +50,34 @@ def array_search_binary():
     if not all(isinstance(value, int) for value in work_data['search_array']):
         return compile_error(
                 {"error_message":"Invalid data in 'search_array' field"})
+    elif not validate_list(work_data['search_array']):
+        return compile_error({"error_message":"Unsorted list"})
 
     if not isinstance(work_data['search_element'], int):
         return compile_error(
                 {"error_message":"Invalid data in 'search_element' field"})
 
-    temp_array = list(work_data.values())
+    return Response(start_search(work_data))
 
-    # start searching and result operating
-    if validate_list(temp_array[0]):
-        search_result = b_search(temp_array[0], temp_array[1])
-    else:
-        return compile_error({"error_message":"Unsorted list"})
-    
-    answer = {'search_element_index': search_result}
-    send_request_info(work_data, answer)
+def start_search(client_data):
+    '''search execution and result processing'''
+    search_result = b_search(client_data['search_array'], 
+                                client_data['search_element'])
+
+    answer_text = {'search_element_index': search_result}
+
+    # sending to rabbit queue
+    search_data = copy.deepcopy(client_data)
+    search_data.update(answer_text)
+    search_data = json.dumps(search_data)
+    send_request_info(search_data, current_queue)
+
     logger.info('Client data: %s, search result: %s' % 
-                (work_data, search_result))
-    return Response(json.dumps(answer))
+                (client_data, search_result))
+    return json.dumps(answer_text)
 
 def compile_error(error_text):
-    '''creating error message for response'''
+    '''creating error message for response with code 400'''
     response = app.response_class(
         response = json.dumps(error_text),
         status = 400,
@@ -79,14 +86,15 @@ def compile_error(error_text):
     return response
 
 def validate_list(temp_list):
-    '''validation of incoming list for ascending'''
+    '''validation of incoming list for ascending order'''
     for i in range(len(temp_list)-1):
         if temp_list[i] > temp_list[i+1]:
             return False
     return True
 
 def b_search(seq, value):
-    '''binary search in sorted list'''
+    '''execution of binary search - "int" value in ascending sorted list
+    returns value index or "-1" if value is not present in list '''
     start_index = 0
     end_index = len(seq) - 1
 
@@ -101,11 +109,9 @@ def b_search(seq, value):
             return middle
     return -1
 
-def send_request_info(s_data, result):
-    '''sending notification to rabbit queue'''
-    search_data = copy.deepcopy(s_data)
-    search_data.update(result)
-    search_data = json.dumps(search_data)
-
-    channel.basic_publish(exchange='', routing_key='search', body=search_data)
-    logger.info("Request and result send to queue 'Search'")
+def send_request_info(resulting_data, active_queue):
+    '''sending result notification to rabbit queue'''
+    
+    channel.basic_publish(exchange='', 
+                            routing_key=active_queue, body=resulting_data)
+    logger.info("Request and result send to queue: " + active_queue)
