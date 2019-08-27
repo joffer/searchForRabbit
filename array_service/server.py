@@ -115,13 +115,3 @@ def send_request_info(resulting_data, active_queue):
     channel.basic_publish(exchange='', 
                             routing_key=active_queue, body=resulting_data)
     logger.info("Request and result send to queue: " + active_queue)
-
-#start check of correct work of application
-with app.test_client() as test_client:
-    # ideal scenario test
-    check_send = test_client.post('/array/search/binary/', json=json.dumps({
-        'search_array': [1,3,5,8,10,12], 
-        'search_element': 5
-    }))
-    send_result = check_send.get_json(force=True)
-    assert send_result['search_element_index'] == 2
