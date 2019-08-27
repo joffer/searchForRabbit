@@ -1,13 +1,23 @@
 version: '2'
 services:
-    rabbit-queue:
-        image: rabbitmq
-        hostname: localhost
-    search-service:
+    rabbitmq:
+        image: 'rabbitmq:3.6-management-alpine'
+        ports:
+        # The standard AMQP protocol port
+        - '5672:5672'
+        # HTTP management UI
+        - '15672:15672'
+        networks:
+            - network
+    publisher:
         build: .
+        environment:
+          AMQP_URL: 'amqp://localhost?connection_attempts=5&retry_delay=5'
         ports:
             - "5000:5000"
-        volumes:
-            - .:/app
         depends_on:
-            - rabbit-queue
+            - rabbitmq
+        networks:
+            - network
+networks:
+  network:  
