@@ -7,10 +7,14 @@ services:
           - '5672:5672'
         # HTTP management UI
           - '15672:15672'
+        hostname: rabbit
     publisher:
         build: .
         command: python ./run.py
         ports:
           - "5000:5000"
+        links: rabbit
+        volumes:
+          - ./app
         depends_on:
           - rabbitmq
