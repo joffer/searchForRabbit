@@ -21,10 +21,10 @@ log_file.setFormatter(formatter)
 logger.addHandler(log_file)
 
 # rabbit queue connection 
-connection_address = '127.0.0.1'
+connection_address = 'localhost'
 current_queue = 'search'
 connection = pika.BlockingConnection(
-                pika.ConnectionParameters(connection_address))
+            pika.ConnectionParameters(connection_address))
 channel = connection.channel()
 channel.queue_declare(queue=current_queue)
 

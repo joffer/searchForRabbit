@@ -2,12 +2,12 @@ version: '2'
 services:
     rabbit-queue:
         image: rabbitmq
+        hostname: localhost
     search-service:
         build: .
         ports:
             - "5000:5000"
         volumes:
-            - .:/code
+            - .:/app
         depends_on:
             - rabbit-queue
-
