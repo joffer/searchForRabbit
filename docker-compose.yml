@@ -1,0 +1,13 @@
+version: '2'
+services:
+    rabbit-queue:
+        image: rabbitmq
+    search-service:
+        build: .
+        ports:
+            - "5000:5000"
+        volumes:
+            - .:/code
+        depends_on:
+            - rabbit-queue
+
