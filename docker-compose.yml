@@ -4,20 +4,13 @@ services:
         image: 'rabbitmq:3.6-management-alpine'
         ports:
         # The standard AMQP protocol port
-        - '5672:5672'
+          - '5672:5672'
         # HTTP management UI
-        - '15672:15672'
-        networks:
-            - network
+          - '15672:15672'
     publisher:
         build: .
-        environment:
-          AMQP_URL: 'amqp://localhost?connection_attempts=5&retry_delay=5'
+        command: python ./run.py
         ports:
-            - "5000:5000"
+          - "5000:5000"
         depends_on:
-            - rabbitmq
-        networks:
-            - network
-networks:
-  network:  
+          - rabbitmq
