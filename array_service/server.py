@@ -47,15 +47,15 @@ def array_search_binary():
     if not all(key in work_data for key in key_list) or len(work_data) != 2:
         return compile_error({'error_message':'Incorrect data fields'})
 
+    if not isinstance(work_data['search_element'], int):
+        return compile_error(
+                {"error_message":"Invalid data in 'search_element' field"})
+
     if not all(isinstance(value, int) for value in work_data['search_array']):
         return compile_error(
                 {"error_message":"Invalid data in 'search_array' field"})
     elif not validate_list(work_data['search_array']):
-        return compile_error({"error_message":"Unsorted list"})
-
-    if not isinstance(work_data['search_element'], int):
-        return compile_error(
-                {"error_message":"Invalid data in 'search_element' field"})
+        work_data['search_array'].sort()
 
     return Response(start_search(work_data))
 
